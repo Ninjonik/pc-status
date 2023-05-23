@@ -47,6 +47,12 @@ const About = () => {
     setPingResults(updatedResults);
   };
 
+  const sendWoL = async (macAddress: string) => {
+    const response = await fetch(`http://localhost:80/wol/${macAddress}`);
+    const data = await response.json();
+    console.log(data);
+  };
+
   return (
     <div className="container mx-auto px-4 flex justify-center items-center min-h-screen">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
@@ -79,9 +85,17 @@ const About = () => {
                   )}
                 </>
               ) : status === 'error' ? (
-                <button className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 mt-2 rounded">
-                  Error
-                </button>
+                <>
+                  <button className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 mt-2 rounded">
+                    Error
+                  </button>
+                  <button
+                    className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 mt-2 rounded"
+                    onClick={() => sendWoL(computer.macAddress)}
+                  >
+                    Zobudiť
+                  </button>
+                </>
               ) : (
                 <button className="bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-2 mt-2 rounded">
                   Pending
@@ -89,7 +103,6 @@ const About = () => {
               )}
             </div>
           );
-          
         })}
       </div>
     </div>

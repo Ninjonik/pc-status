@@ -17,7 +17,7 @@
   {
     "name": "Computer 4",
     "macAddress": "AA:BB:CC:DD:EE:11",
-    "ipAddress": "10.2.1.70"
+    "ipAddress": "10.2.1.90"
   },
   {
     "name": "Computer 5",
@@ -32,21 +32,21 @@
   {
     "name": "Computer 7",
     "macAddress": "33:44:55:66:77:88",
-    "ipAddress": "10.2.1.238"
+    "ipAddress": "10.2.1.22"
   },
   {
     "name": "Computer 8",
     "macAddress": "CC:DD:EE:FF:11:22",
-    "ipAddress": "10.2.1.238"
+    "ipAddress": "10.2.1.75"
   },
   {
     "name": "Computer 9",
     "macAddress": "44:55:66:77:88:99",
-    "ipAddress": "10.2.1.238"
+    "ipAddress": "10.2.1.24"
   },
   {
     "name": "Peter PC",
     "macAddress": "18-CC-18-C2-65-00",
-    "ipAddress": "10.2.1.120"
+    "ipAddress": "10.2.0.1"
   }
 ]

@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Computer 1",
+    "macAddress": "00:11:22:33:44:55",
+    "ipAddress": "10.2.1.238"
+  },
+  {
+    "name": "Computer 2",
+    "macAddress": "AA:BB:CC:DD:EE:FF",
+    "ipAddress": "google.com"
+  },
+  {
+    "name": "Computer 3",
+    "macAddress": "11:22:33:44:55:66",
+    "ipAddress": "DESKTOP-SMVS62K"
+  },
+  {
+    "name": "Computer 4",
+    "macAddress": "AA:BB:CC:DD:EE:11",
+    "ipAddress": "10.2.1.70"
+  },
+  {
+    "name": "Computer 5",
+    "macAddress": "22:33:44:55:66:77",
+    "ipAddress": "sdkfmsmfsmfosfjsoifois"
+  },
+  {
+    "name": "Computer 6",
+    "macAddress": "BB:CC:DD:EE:FF:11",
+    "ipAddress": "10.2.1.238"
+  },
+  {
+    "name": "Computer 7",
+    "macAddress": "33:44:55:66:77:88",
+    "ipAddress": "10.2.1.238"
+  },
+  {
+    "name": "Computer 8",
+    "macAddress": "CC:DD:EE:FF:11:22",
+    "ipAddress": "10.2.1.238"
+  },
+  {
+    "name": "Computer 9",
+    "macAddress": "44:55:66:77:88:99",
+    "ipAddress": "10.2.1.238"
+  },
+  {
+    "name": "Computer 10",
+    "macAddress": "DD:EE:FF:11:22:33",
+    "ipAddress": "10.2.1.238"
+  }
+]

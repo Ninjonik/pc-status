@@ -2,7 +2,7 @@
   {
     "name": "Computer 1",
     "macAddress": "00:11:22:33:44:55",
-    "ipAddress": "10.2.1.238"
+    "ipAddress": "127.0.0.1"
   },
   {
     "name": "Computer 2",
@@ -27,7 +27,7 @@
   {
     "name": "Computer 6",
     "macAddress": "BB:CC:DD:EE:FF:11",
-    "ipAddress": "10.2.1.238"
+    "ipAddress": "localhost"
   },
   {
     "name": "Computer 7",

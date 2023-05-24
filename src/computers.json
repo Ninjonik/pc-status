@@ -1,7 +1,7 @@
 [
   {
     "name": "Localhost",
-    "macAddress": "7C-5C-F8-5D-5F-CA",
+    "macAddress": "7C-5C-F8-5D-5F-CB",
     "ipAddress": "127.0.0.1"
   },
   {
@@ -25,7 +25,7 @@
     "ipAddress": "sdkfmsmfsmfosfjsoifois"
   },
   {
-    "name": "Localhost MAC",
+    "name": "Localhost MAC Test",
     "macAddress": "7C-5C-F8-5D-5F-CA",
     "ipAddress": "localhostfoijnoighoijh"
   },
@@ -46,7 +46,7 @@
   },
   {
     "name": "Peter PC",
-    "macAddress": "18-CC-18-C2-65-00",
+    "macAddress": "18:CC:18:C2:65:00",
     "ipAddress": "10.2.0.1"
   }
 ]

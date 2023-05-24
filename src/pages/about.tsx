@@ -118,7 +118,11 @@ const About = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 flex justify-center items-center min-h-screen">
+    <div>
+    <header className="bg-gray-800 text-white py-4 px-8">
+      <div className="text-center">PC Status</div>
+    </header>
+    <div className="container mx-auto px-4 flex justify-center items-center min-h-screen pt-8 pb-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {computersData.map((computer, index) => {
           const pingResult = pingResults.find(result => result.ipAddress === computer.ipAddress);
@@ -177,6 +181,7 @@ const About = () => {
         })}
       </div>
     </div>
+  </div>
   );
 };
 

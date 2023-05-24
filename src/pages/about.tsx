@@ -79,7 +79,7 @@ const About = () => {
 
     if (data.status === 'success') {
       console.log('Waking up...');
-      await new Promise(resolve => setTimeout(resolve, 0.01 * 60 * 1000)); // Wait for 2 minutes
+      await new Promise(resolve => setTimeout(resolve, 2 * 60 * 1000)); // Wait for 2 minutes
 
       // Check ping status again after waiting
       const pingResponse = await fetch(`http://localhost:80/ping/${ipAddress}`);

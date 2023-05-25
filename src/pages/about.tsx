@@ -1,11 +1,12 @@
   import React, { useEffect, useState } from 'react';
   import computersData from '../computers.json';
   import { serverAddress } from '../config';
+  import axios from 'axios';
 
   /*
 
   TODO: 25.5.2023
-  - implementovať frontend delete computer
+  - implementovať frontend delete computer ✔️
   - spraviť možnosť pingnutia počítača znovu
   - dorobiť WOL, že po dvoch minútach refreshne ten počítač (ak sa spustí -> rovnako ako pri spraviť možnosť pingnutia počítača znovu)
 
@@ -23,10 +24,8 @@
 
   interface WolStatus {
     ipAddress: string;
-    wolState: WolState;
+    wolState: 'idle' | 'waking' | 'woken' | 'wokenError';
   }
-
-  type WolState = 'idle' | 'waking' | 'woken' | 'wokenError';
 
   const About = () => {
     const [pingResults, setPingResults] = useState<PingResult[]>([]);
@@ -70,13 +69,13 @@
     const sendWoL = async (macAddress: string) => {
       const ipAddress = computersData.find(computer => computer.macAddress === macAddress)?.ipAddress;
       if (!ipAddress) {
-        console.log(`Could not find IP address for MAC address: ${macAddress}`);
+        console.log(`Nebola nájdená IP Adresa pre MAC Adresu: ${macAddress}`);
         return;
       }
     
       const existingWolStatus = wolStatuses.find(status => status.ipAddress === ipAddress);
       if (existingWolStatus && existingWolStatus.wolState !== 'idle' && existingWolStatus.wolState !== 'wokenError') {
-        console.log(`WoL already in progress for IP address: ${ipAddress}`);
+        console.log(`WoL už prebieha pre IP Adresu: ${ipAddress}`);
         return;
       }
     
@@ -88,7 +87,7 @@
       console.log(data);
     
       if (data.status === 'success') {
-        console.log('Waking up...');
+        console.log('Zobúdzanie...');
         await new Promise(resolve => setTimeout(resolve, 0.05 * 60 * 1000));
     
         const pingResponse = await fetch(`${serverAddress}/ping/${ipAddress}`);
@@ -122,7 +121,14 @@
           return status;
         });
         setRdpStatuses(finalStatuses);
-        console.log('Computer has been woken up.');
+      }
+    };
+
+    const deleteComputer = async (macAddress: string) => {
+      try {
+        await axios.post(`${serverAddress}/remove-computer`, { macAddress });
+      } catch (error) {
+        console.log(error);  
       }
     };
     
@@ -174,7 +180,7 @@
                         className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 mt-2 rounded"
                         onClick={() => sendWoL(computer.macAddress)}
                       >
-                        Zobudiť
+                        ⏰ Zobudiť
                       </button>
                     )}
                     {wolState === 'waking' && <p className="text-yellow-500">Zobúdzam počítač....</p>}
@@ -185,7 +191,7 @@
                         className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 mt-2 rounded"
                         onClick={() => sendWoL(computer.macAddress)}
                       >
-                        Zobudiť znovu 
+                        ⏰ Zobudiť znovu 
                       </button>
                       <p className="text-red-500">Počítač sa nepodarilo zobudiť</p>
                     </div>
@@ -196,6 +202,9 @@
                     Pingovanie
                   </button>
                 )}
+                  <button className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 mt-2 rounded" onClick={() => deleteComputer(computer.macAddress)}>
+                  ❌ Odstrániť
+                  </button>
               </div>
             );
           })}

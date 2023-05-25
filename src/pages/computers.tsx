@@ -1,6 +1,6 @@
   import React, { useEffect, useState } from 'react';
   import computersData from '../computers.json';
-  import { serverAddress } from '../config';
+  import { serverAddress, devMode } from '../config';
   import axios from 'axios';
 
   interface PingResult {
@@ -54,7 +54,9 @@
       if (ipAddress) {
         const computer = computersData.find((computer) => computer.ipAddress === ipAddress);
         if (computer) {
-          //computer.ipAddress = "127.0.0.1";
+          if (devMode){
+            computer.ipAddress = "127.0.0.1";
+          }
           try {
             const response = await fetch(`${serverAddress}/ping/${computer.ipAddress}`);
             const data = await response.json();
@@ -111,16 +113,21 @@
     
       if (data.status === 'success') {
         console.log('Zobúdzanie...');
-        await new Promise(resolve => setTimeout(resolve, 2 * 60 * 1000));
-        const pingResponse = await fetch(`${serverAddress}/ping/${ipAddress}`);
-        //const pingResponse = await fetch(`${serverAddress}/ping/127.0.0.1`);
+        let pingResponse;
+        if (devMode){
+          await new Promise(resolve => setTimeout(resolve, 0.01 * 60 * 1000));
+          pingResponse = await fetch(`${serverAddress}/ping/127.0.0.1`);
+        } else {
+          await new Promise(resolve => setTimeout(resolve, 2 * 60 * 1000));
+          pingResponse = await fetch(`${serverAddress}/ping/${ipAddress}`);
+        }
         const pingData = await pingResponse.json();
         const computer = computersData.find((computer) => computer.ipAddress === ipAddress);
         if (pingData.status === 'success' && computer) {
-          /* 
-          computer.ipAddress = "127.0.0.1";
-          ipAddress = "127.0.0.1"; 
-          */
+          if (devMode){
+            computer.ipAddress = "127.0.0.1";
+            ipAddress = "127.0.0.1"; 
+          }
           const updatedResult = { ipAddress: computer.ipAddress, status: 'success' as const };
           setPingResults((prevResults) => [...prevResults, updatedResult]);
           console.log(`success ${computer.ipAddress}`);
@@ -182,10 +189,31 @@
               const wolState = wolStatus ? wolStatus.wolState : 'idle';
     
               return (
-                <div key={index} className="bg-gray-200 p-4 rounded-lg shadow-md">
+                <div key={index} className="bg-gray-200 p-4 rounded-lg shadow-md relative">
                   <h3 className="text-lg font-semibold">{computer.name}</h3>
-                  <p className="mt-2">MAC Adresa: {computer.macAddress}</p>
+                  {/* <p className="mt-2">MAC Adresa: {computer.macAddress}</p> */}
                   <p>IP Adresa: {computer.ipAddress}</p>
+    
+                  <div className="absolute top-0 right-0 mt-2 mr-2 space-x-2">
+                    <button
+                      type="button"
+                      rel="tooltip"
+                      className="btn btn-info btn-round"
+                      onClick={() => {
+                        pingSelectedComputer(computer.ipAddress);
+                      }}
+                    >
+                      <i className="fa-solid fa-arrows-rotate"></i>
+                    </button>
+                    <button
+                      type="button"
+                      rel="tooltip"
+                      className="btn btn-danger btn-round"
+                      onClick={() => deleteComputer(computer.macAddress)}
+                    >
+                      <i className="fa-sharp fa-solid fa-trash"></i>
+                    </button>
+                  </div>
     
                   <div className="grid grid-cols-2 gap-4 mt-4">
                     {status === 'success' ? (
@@ -236,21 +264,6 @@
                         🏓Pingovanie
                       </button>
                     )}
-    
-                    <button
-                      className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded"
-                      onClick={() => {
-                        pingSelectedComputer(computer.ipAddress);
-                      }}
-                    >
-                      🔄Obnoviť
-                    </button>
-                    <button
-                      className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded"
-                      onClick={() => deleteComputer(computer.macAddress)}
-                    >
-                      ❌Odstrániť
-                    </button>
                   </div>
                 </div>
               );

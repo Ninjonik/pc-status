@@ -2,44 +2,61 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { serverAddress } from '../config';
 
-interface Computer {
-  name: string;
-  macAddress: string;
-  ipAddress: string;
-}
-
-const AddComputer: React.FC = () => {
+const AddComputer = () => {
   const [computerName, setComputerName] = useState('');
   const [macAddress, setMacAddress] = useState('');
   const [ipAddress, setIpAddress] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const validateMacAddress = (address: string) => {
+    const macRegex = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/;
+    return macRegex.test(address);
+  };
+  
+  const validateIpAddress = (address: string) => {
+    const ipRegex = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/;
+    return ipRegex.test(address);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newComputer: Computer = {
-      name: computerName,
-      macAddress,
-      ipAddress,
-    };
-
-    try {
-      await axios.post(`${serverAddress}/add-computer`, newComputer);
-      setSuccessMessage('Počítač úspešne pridaný!');
-      setErrorMessage('');
-    } catch (error) {
-      setErrorMessage(
-        'Chyba pri pridávaní počítača, skúste to prosím znovu.'
-      );
-      setSuccessMessage('');
-      console.log(error);
+    if (!validateMacAddress(macAddress)) {
+      setErrorMessage('Invalid MAC address format.');
+      return;
     }
 
-    // Reset the form
-    setComputerName('');
-    setMacAddress('');
-    setIpAddress('');
+    if (!validateIpAddress(ipAddress)) {
+      setErrorMessage('Invalid IP address format.');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await axios.post(`${serverAddress}/add-computer`, {
+        name: computerName,
+        macAddress,
+        ipAddress,
+      });
+
+      if (response.data.success) {
+        setSuccessMessage('Form submitted successfully!');
+        setComputerName('');
+        setMacAddress('');
+        setIpAddress('');
+        setErrorMessage('');
+      } else {
+        setErrorMessage(response.data.error);
+      }
+    } catch (error) {
+      console.log(error);
+      setErrorMessage('An error occurred while submitting the form.');
+    }
+
+    setIsLoading(false);
   };
 
   return (
@@ -58,7 +75,7 @@ const AddComputer: React.FC = () => {
               value={computerName}
               onChange={(e) => setComputerName(e.target.value)}
               required
-              className="input-field"
+              className="border border-gray-300 rounded-lg p-2 w-full"
             />
           </div>
           <div>
@@ -72,7 +89,7 @@ const AddComputer: React.FC = () => {
               value={macAddress}
               onChange={(e) => setMacAddress(e.target.value)}
               required
-              className="input-field"
+              className="border border-gray-300 rounded-lg p-2 w-full"
             />
           </div>
           <div>
@@ -86,17 +103,21 @@ const AddComputer: React.FC = () => {
               value={ipAddress}
               onChange={(e) => setIpAddress(e.target.value)}
               required
-              className="input-field"
+              className="border border-gray-300 rounded-lg p-2 w-full"
             />
           </div>
           <div className="flex justify-center">
-            <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-              Pridať
+            <button
+              type="submit"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Loading...' : 'Pridať'}
             </button>
           </div>
         </form>
-        {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
-        {successMessage && <p className="text-green-500 mt-4">{successMessage}</p>}
+        {errorMessage && <p className="text-red-500 mt-4 text-center">{errorMessage}</p>}
+        {successMessage && <p className="text-green-500 mt-4 text-center">{successMessage}</p>}
       </div>
     </div>
   );

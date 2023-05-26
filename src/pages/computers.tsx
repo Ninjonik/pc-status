@@ -189,16 +189,17 @@
               const wolState = wolStatus ? wolStatus.wolState : 'idle';
     
               return (
-                <div key={index} className="bg-gray-200 p-4 rounded-lg shadow-md relative">
+                <div key={index} className="bg-gray-200 p-4 rounded-lg shadow-md relative" data-testid="computer-item">
                   <h3 className="text-lg font-semibold">{computer.name}</h3>
                   {/* <p className="mt-2">MAC Adresa: {computer.macAddress}</p> */}
                   <p>IP Adresa: {computer.ipAddress}</p>
     
-                  <div className="absolute top-0 right-0 mt-2 mr-2 space-x-2">
+                  <div className="absolute top-0 right-0 mt-2 mr-2 space-x-2" data-testid="action_buttons">
                     <button
                       type="button"
                       rel="tooltip"
                       className="btn btn-info btn-round"
+                      name="refresh"
                       onClick={() => {
                         pingSelectedComputer(computer.ipAddress);
                       }}
@@ -209,36 +210,38 @@
                       type="button"
                       rel="tooltip"
                       className="btn btn-danger btn-round"
+                      name="remove"
                       onClick={() => deleteComputer(computer.macAddress)}
                     >
                       <i className="fa-sharp fa-solid fa-trash"></i>
                     </button>
                   </div>
     
-                  <div className="grid grid-cols-2 gap-4 mt-4">
+                  <div className="grid grid-cols-2 gap-4 mt-4" data-testid="status_buttons">
                     {status === 'success' ? (
                       <>
-                        <button className="bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded">
+                        <button className="bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded" name="online">
                           Online
                         </button>
                         {rdpState === 'success' ? (
-                          <button className="bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded">
+                          <button className="bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded" name="rdp_success">
                             RDP
                           </button>
                         ) : rdpState === 'error' ? (
-                          <button className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded">
+                          <button className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded" name="rdp_error">
                             RDP
                           </button>
                         ) : null}
                       </>
                     ) : status === 'error' ? (
                       <>
-                        <button className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded">
+                        <button className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded" name="offline">
                           Offline
                         </button>
                         {wolState === 'idle' ? (
                           <button
                             className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded"
+                            name="wake"
                             onClick={() => sendWoL(computer.macAddress)}
                           >
                             ⏰Zobudiť
@@ -251,6 +254,7 @@
                           <div>
                             <button
                               className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded"
+                              name="wake"
                               onClick={() => sendWoL(computer.macAddress)}
                             >
                               ⏰Zobudiť
@@ -260,7 +264,7 @@
                         ) : null}
                       </>
                     ) : (
-                      <button className="bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-2 rounded">
+                      <button className="bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-2 rounded" name="pinging">
                         🏓Pingovanie
                       </button>
                     )}

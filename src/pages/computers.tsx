@@ -213,7 +213,7 @@
                       name="remove"
                       onClick={() => deleteComputer(computer.macAddress)}
                     >
-                      <i className="fa-sharp fa-solid fa-trash"></i>
+                      <i className="fa-sharp fa-solid fa-trash">r</i>
                     </button>
                   </div>
     

@@ -10,6 +10,11 @@ describe('status of computers', () => {
     cy.get('[data-testid="computer-item"] [data-testid="action_buttons"] button[name="pinging"]').should('not.exist');
   });
 
+  it('deletes the last element in a grid', () => {
+    const lastElement = cy.get('[data-testid="computer-item"]').last();
+    lastElement.find('[name="remove"]').click();
+  });
+
   it('refreshes and checks if computer goes online and RDP button appears', () => {
     cy.get('[data-testid="computer-item"]').each((element, index) => {
       const statusButtons = cy.wrap(element).find('[data-testid="status_buttons"]');
@@ -53,4 +58,5 @@ describe('status of computers', () => {
       cy.wait(1000);
     });
   });
+
 });

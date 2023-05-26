@@ -24,12 +24,12 @@ const AddComputer = () => {
     e.preventDefault();
 
     if (!validateMacAddress(macAddress)) {
-      setErrorMessage('Invalid MAC address format.');
+      setErrorMessage('Neplatná MAC Adresa.');
       return;
     }
 
     if (!validateIpAddress(ipAddress)) {
-      setErrorMessage('Invalid IP address format.');
+      setErrorMessage('Neplatná IP Adresa.');
       return;
     }
 
@@ -43,7 +43,7 @@ const AddComputer = () => {
       });
 
       if (response.data.success) {
-        setSuccessMessage('Form submitted successfully!');
+        setSuccessMessage('Počítač úspešne pridaný!');
         setComputerName('');
         setMacAddress('');
         setIpAddress('');
@@ -53,7 +53,7 @@ const AddComputer = () => {
       }
     } catch (error) {
       console.log(error);
-      setErrorMessage('An error occurred while submitting the form.');
+      setErrorMessage('Stala sa chyba pri spracovávaní formulára.');
     }
 
     setIsLoading(false);
@@ -63,7 +63,7 @@ const AddComputer = () => {
     <div className="flex items-center justify-center h-screen">
       <div className="bg-white rounded-lg p-8 shadow-md">
         <h1 className="text-3xl font-bold mb-4">Pridanie počítača</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" id="form">
           <div>
             <label htmlFor="computerName" className="block font-medium">
               Meno počítača
@@ -110,6 +110,7 @@ const AddComputer = () => {
             <button
               type="submit"
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+              id="submit"
               disabled={isLoading}
             >
               {isLoading ? 'Loading...' : 'Pridať'}

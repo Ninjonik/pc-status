@@ -48,5 +48,25 @@
     "name": "PC4",
     "macAddress": "9F-9F-9F-9F-9F-EF",
     "ipAddress": "17.17.38.8"
+  },
+  {
+    "name": "PC 4189",
+    "macAddress": "9F-9F-9F-9F-9F-9F",
+    "ipAddress": "192.1.1.1"
+  },
+  {
+    "name": "PC Test",
+    "macAddress": "FF-FF-FF-FF-FF-FF",
+    "ipAddress": "1.1.1.1"
+  },
+  {
+    "name": "PC Test",
+    "macAddress": "FF-FF-FF-FF-FF-FF",
+    "ipAddress": "1.1.1.1"
+  },
+  {
+    "name": "PC Test",
+    "macAddress": "FF-FF-FF-FF-FF-FF",
+    "ipAddress": "1.1.1.1"
   }
 ]

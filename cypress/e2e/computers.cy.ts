@@ -1,5 +1,7 @@
 /// <reference types="cypress" />
 
+// Test failne, ak majú dva počítače rovnakú MAC Adresu
+
 describe('status of computers', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000/computers');
@@ -14,6 +16,26 @@ describe('status of computers', () => {
     const lastElement = cy.get('[data-testid="computer-item"]').last();
     lastElement.find('[name="remove"]').click();
   });
+
+ it('clicks on the edit button, changes the name, checks if the name was changed - last element in a grid', () => {
+  cy.get('[data-testid="computer-item"]').last().within(() => {
+    cy.get('[name="edit"]').click();
+    cy.get('[name="name_input"]').clear().type("#E Computer");
+    cy.get('[name="save"]').click();
+  });
+
+  cy.wait(1000);
+
+  cy.get('[data-testid="computer-item"]').last().within(() => {
+    cy.get('#name').invoke('text').then((text) => {
+      const name = text.trim();
+      if (name !== "#E Computer") {
+        throw new Error("Edit computer name failed.");
+      }
+    });
+  });
+});
+
 
   it('refreshes and checks if computer goes online and RDP button appears', () => {
     cy.get('[data-testid="computer-item"]').each((element, index) => {

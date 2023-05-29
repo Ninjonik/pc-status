@@ -22,6 +22,11 @@
     const [pingResults, setPingResults] = useState<PingResult[]>([]);
     const [rdpStatuses, setRdpStatuses] = useState<RdpStatus[]>([]);
     const [wolStatuses, setWolStatuses] = useState<WolStatus[]>([]);
+    const [computers_Data, setComputers_Data] = useState<{ name: string; macAddress: string; ipAddress: string; }[]>([]);
+
+    const updateComputers_Data = (updated_Data: { name: string; macAddress: string; ipAddress: string; }[]) => {
+      setComputers_Data(updated_Data);
+    };    
 
     useEffect(() => {
       const pingComputers = async () => {
@@ -173,6 +178,49 @@
         console.log(error);  
       }
     };
+
+    const [editMode, setEditMode] = useState(false);
+    const [editedValues, setEditedValues] = useState<{ ipAddress: string; name: string } | null>(null);
+
+    const handleEditClick = (ipAddress: string, name: string) => {
+      setEditMode(true);
+      setEditedValues({ ipAddress, name });
+    };
+    
+    const handleSaveClick = () => {
+      // Update the computer data with the edited values
+      const updatedComputers_Data = computersData.map((computer) => {
+        if (computer.ipAddress === editedValues?.ipAddress) {
+          return { ...computer, name: editedValues.name };
+        }
+        return computer;
+      });
+    
+      // Update the computersData state variable
+      setComputers_Data(updatedComputers_Data);
+    
+      // Send the updated data to the server
+      fetch(`${serverAddress}/edit-computer`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ipAddress: editedValues ? editedValues.ipAddress : '', name: editedValues ? editedValues.name : '' }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          // Handle the response if necessary
+          console.log(data);
+        })
+        .catch((error) => {
+          // Handle any errors
+          console.error(error);
+        });
+    
+      setEditMode(false);
+      setEditedValues(null);
+    };
+    
     
 
     return (
@@ -190,7 +238,17 @@
     
               return (
                 <div key={index} className="bg-gray-200 p-4 rounded-lg shadow-md relative" data-testid="computer-item">
-                  <h3 className="text-lg font-semibold">{computer.name}</h3>
+                  {editMode && editedValues?.ipAddress === computer.ipAddress ? (
+                    <input
+                      type="text"
+                      value={editedValues.name}
+                      name="name_input"
+                      onChange={(e) => setEditedValues((prevValues) => ({ ...prevValues, name: e.target.value, ipAddress: prevValues?.ipAddress || '' }))}
+                    />
+                  ) : (
+                    <h3 className="text-lg font-semibold" id="name">{computer.name}</h3>
+                  )}
+
                   {/* <p className="mt-2">MAC Adresa: {computer.macAddress}</p> */}
                   <p>IP Adresa: {computer.ipAddress}</p>
     
@@ -213,8 +271,30 @@
                       name="remove"
                       onClick={() => deleteComputer(computer.macAddress)}
                     >
-                      <i className="fa-sharp fa-solid fa-trash">r</i>
+                      <i className="fa-sharp fa-solid fa-trash"></i>
                     </button>
+                    {editMode && editedValues?.ipAddress === computer.ipAddress ? (
+                      <button
+                      type="button"
+                      rel="tooltip"
+                      className="btn btn-secondary btn-round"
+                      name="save"
+                      onClick={() => handleSaveClick()}
+                    >
+                      <i className="fa-sharp fa-solid fa-save"></i>
+                    </button>
+
+                    ) : (         
+                    <button
+                    type="button"
+                    rel="tooltip"
+                    className="btn btn-secondary btn-round"
+                    name="edit"
+                    onClick={() => handleEditClick(computer.ipAddress, computer.name)}
+                    >
+                    <i className="fa-sharp fa-solid fa-pencil"></i>
+                    </button>
+                    )}
                   </div>
     
                   <div className="grid grid-cols-2 gap-4 mt-4" data-testid="status_buttons">

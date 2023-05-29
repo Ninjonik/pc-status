@@ -249,8 +249,8 @@
                     <h3 className="text-lg font-semibold" id="name">{computer.name}</h3>
                   )}
 
-                  {/* <p className="mt-2">MAC Adresa: {computer.macAddress}</p> */}
-                  <p>IP Adresa: {computer.ipAddress}</p>
+                  {/* <p className="mt-2"><i className="fas fa-desktop"></i> MAC Adresa: {computer.macAddress}</p> */}
+                  <p><i className="fas fa-globe"></i> IP Adresa: {computer.ipAddress}</p>
     
                   <div className="absolute top-0 right-0 mt-2 mr-2 space-x-2" data-testid="action_buttons">
                     <button
@@ -263,15 +263,6 @@
                       }}
                     >
                       <i className="fa-solid fa-arrows-rotate"></i>
-                    </button>
-                    <button
-                      type="button"
-                      rel="tooltip"
-                      className="btn btn-danger btn-round"
-                      name="remove"
-                      onClick={() => deleteComputer(computer.macAddress)}
-                    >
-                      <i className="fa-sharp fa-solid fa-trash"></i>
                     </button>
                     {editMode && editedValues?.ipAddress === computer.ipAddress ? (
                       <button
@@ -295,28 +286,37 @@
                     <i className="fa-sharp fa-solid fa-pencil"></i>
                     </button>
                     )}
+                    <button
+                      type="button"
+                      rel="tooltip"
+                      className="btn btn-danger btn-round"
+                      name="remove"
+                      onClick={() => deleteComputer(computer.macAddress)}
+                    >
+                      <i className="fa-sharp fa-solid fa-trash"></i>
+                    </button>
                   </div>
     
                   <div className="grid grid-cols-2 gap-4 mt-4" data-testid="status_buttons">
                     {status === 'success' ? (
                       <>
                         <button className="bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded" name="online">
-                          Online
+                        <i className="fa-solid fa-plug"></i> Online
                         </button>
                         {rdpState === 'success' ? (
                           <button className="bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded" name="rdp_success">
-                            RDP
+                            <i className="fa-regular fa-circle-check"></i> RDP
                           </button>
                         ) : rdpState === 'error' ? (
                           <button className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded" name="rdp_error">
-                            RDP
+                            <i className="fa-regular fa-circle-xmark"></i> RDP
                           </button>
                         ) : null}
                       </>
                     ) : status === 'error' ? (
                       <>
                         <button className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded" name="offline">
-                          Offline
+                        <i className="fa-solid fa-power-off"></i> Offline
                         </button>
                         {wolState === 'idle' ? (
                           <button
@@ -324,7 +324,7 @@
                             name="wake"
                             onClick={() => sendWoL(computer.macAddress)}
                           >
-                            ⏰Zobudiť
+                            ⏰ Zobudiť
                           </button>
                         ) : wolState === 'waking' ? (
                           <p className="text-yellow-500">Zobúdzam počítač....</p>
@@ -337,7 +337,7 @@
                               name="wake"
                               onClick={() => sendWoL(computer.macAddress)}
                             >
-                              ⏰Zobudiť
+                              ⏰ Zobudiť
                             </button>
                             <p className="text-red-500">Počítač sa nepodarilo zobudiť</p>
                           </div>
@@ -345,7 +345,7 @@
                       </>
                     ) : (
                       <button className="bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-2 rounded" name="pinging">
-                        🏓Pingovanie
+                        🏓 Pingovanie
                       </button>
                     )}
                   </div>

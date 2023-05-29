@@ -5,12 +5,12 @@
     "ipAddress": "127.0.0.1"
   },
   {
-    "name": "Google_",
+    "name": "Google",
     "macAddress": "AA:BB:CC:DD:EE:FF",
     "ipAddress": "google.com"
   },
   {
-    "name": "Localhost zuhzh",
+    "name": "Localhost -",
     "macAddress": "11:22:33:44:55:66",
     "ipAddress": "DESKTOP-SMVS62K"
   },
@@ -30,13 +30,28 @@
     "ipAddress": "localhostfoijnoighoijh"
   },
   {
-    "name": "Computer 7",
+    "name": "#E Computer",
     "macAddress": "33:44:55:66:77:88",
     "ipAddress": "10.2.1.22"
   },
   {
+    "name": "PC Test a",
+    "macAddress": "A4-2B-39-66-FC-7F",
+    "ipAddress": "232.178.234.131"
+  },
+  {
+    "name": "PC Test b",
+    "macAddress": "64-D6-94-27-0F-AF",
+    "ipAddress": "211.55.194.98"
+  },
+  {
+    "name": "PC Test c",
+    "macAddress": "7B-8B-9F-F5-EF-A9",
+    "ipAddress": "40.52.211.32"
+  },
+  {
     "name": "#E Computer",
-    "macAddress": "9F-9F-9F-9F-9F-9F",
-    "ipAddress": "18.47.74.1"
+    "macAddress": "1D-BC-AD-16-E8-D2",
+    "ipAddress": "2.250.217.99"
   }
 ]

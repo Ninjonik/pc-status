@@ -300,22 +300,22 @@
                   <div className="grid grid-cols-2 gap-4 mt-4" data-testid="status_buttons">
                     {status === 'success' ? (
                       <>
-                        <button className="bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded" name="online">
+                        <button className="bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded" name="online" disabled>
                         <i className="fa-solid fa-plug"></i> Online
                         </button>
                         {rdpState === 'success' ? (
-                          <button className="bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded" name="rdp_success">
+                          <button className="bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded" name="rdp_success" disabled>
                             <i className="fa-regular fa-circle-check"></i> RDP
                           </button>
                         ) : rdpState === 'error' ? (
-                          <button className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded" name="rdp_error">
+                          <button className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded" name="rdp_error" disabled>
                             <i className="fa-regular fa-circle-xmark"></i> RDP
                           </button>
                         ) : null}
                       </>
                     ) : status === 'error' ? (
                       <>
-                        <button className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded" name="offline">
+                        <button className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded" name="offline" disabled>
                         <i className="fa-solid fa-power-off"></i> Offline
                         </button>
                         {wolState === 'idle' ? (

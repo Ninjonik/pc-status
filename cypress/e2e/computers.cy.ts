@@ -49,7 +49,7 @@ describe('status of computers', () => {
     cy.get('[data-testid="computer-item"]').each((element) => {
       cy.wrap(element).find('[data-testid="status_buttons"]').then(($buttons) => {
         if ($buttons.find('[name="offline"]').length > 0) {
-          cy.wrap(element).find('[data-testid="status_buttons"] [name="wake"]').click();
+          cy.wrap(element).find('[data-testid="action_buttons"] [name="wake"]').click();
           cy.wait(2500);
           cy.wrap(element).find('[data-testid="status_buttons"] [name="rdp_success"]').should('exist');
           cy.wrap(element).find('[data-testid="status_buttons"] [name="offline"]').should('not.exist');

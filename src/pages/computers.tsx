@@ -62,6 +62,9 @@
           if (devMode){
             computer.ipAddress = "127.0.0.1";
           }
+          // TODO: Nefunguje z nejakého dôvodu
+          const updatedResult = { ipAddress: computer.ipAddress, status: 'pending' as const };
+          setPingResults((prevResults) => [...prevResults, updatedResult]);
           try {
             const response = await fetch(`${serverAddress}/ping/${computer.ipAddress}`);
             const data = await response.json();
@@ -341,18 +344,7 @@
                         <button className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded" name="offline" disabled>
                         <i className="fa-solid fa-power-off"></i> Offline
                         </button>
-                        <button className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded" name="rdp_error" disabled>
-                            <i className="fa-regular fa-circle-xmark"></i> RDP
-                        </button>
-                        {wolState === 'idle' ? (
-                          <button hidden
-                            className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded"
-                            name="wake"
-                            onClick={() => sendWoL(computer.macAddress)}
-                          >
-                            ⏰ Zobudiť
-                          </button>
-                        ) : wolState === 'waking' ? (
+                        {wolState === 'waking' ? (
                           <div className="flex items-center" id="waking">
                             <div className="relative inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-yellow-500 border-r-transparent">
                               <span className="absolute top-1/2 left-full transform -translate-y-1/2 -translate-x-1/2 h-px w-px overflow-hidden whitespace-nowrap border-0 p-0 clip-[rect(0,0,0,0)]">
@@ -364,16 +356,7 @@
                         ) : wolState === 'woken' ? (
                           <p className="text-green-500">Zobudený</p>
                         ) : wolState === 'wokenError' ? (
-                          <div hidden>
-                            <button
-                              className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded"
-                              name="wake"
-                              onClick={() => sendWoL(computer.macAddress)}
-                            >
-                              ⏰ Zobudiť
-                            </button>
-                            <p className="text-red-500">Počítač sa nepodarilo zobudiť</p>
-                          </div>
+                          <p className="text-red-500">Počítač sa nepodarilo zobudiť</p>
                         ) : null}
                       </>
                     ) : (

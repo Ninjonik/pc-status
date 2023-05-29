@@ -226,7 +226,7 @@
     return (
       <div>
         <div className="container mx-auto px-4 flex justify-center items-center min-h-screen pt-8 pb-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full">
             {computersData.map((computer, index) => {
               const pingResult = pingResults.find((result) => result.ipAddress === computer.ipAddress);
               const rdpStatus = rdpStatuses.find((status) => status.ipAddress === computer.ipAddress);
@@ -250,9 +250,32 @@
                   )}
 
                   {/* <p className="mt-2"><i className="fas fa-desktop"></i> MAC Adresa: {computer.macAddress}</p> */}
-                  <p><i className="fas fa-globe"></i> IP Adresa: {computer.ipAddress}</p>
+                  <p><i className="fas fa-globe"></i> {computer.ipAddress}</p>
+                  {status === 'success' ? (
+                    <div className="flex justify-between">
+                      <p className="text-green-600"><i className="fa-solid fa-plug"></i> Online</p>
+                      {rdpState === 'success' ? (
+                        <p className="text-green-600"><i className="fa-solid fa-circle-check"></i> RDP</p>
+                      ) : (
+                        <p className="text-red-600"><i className="fa-solid fa-circle-xmark"></i> RDP</p>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-red-600"><i className="fa-solid fa-power-off"></i> Offline</p>
+                  )}
     
                   <div className="absolute top-0 right-0 mt-2 mr-2 space-x-2" data-testid="action_buttons">
+                    {status === 'error' && (wolState === 'idle' || wolState === 'wokenError') ? (
+                      <button
+                      type="button"
+                      rel="tooltip"
+                      className="btn btn-danger btn-round"
+                      name="wake"
+                      onClick={() => sendWoL(computer.macAddress)}
+                    >
+                      <i className="fa-regular fa-bell"></i>
+                    </button>
+                    ) : null}
                     <button
                       type="button"
                       rel="tooltip"
@@ -318,8 +341,11 @@
                         <button className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded" name="offline" disabled>
                         <i className="fa-solid fa-power-off"></i> Offline
                         </button>
+                        <button className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded" name="rdp_error" disabled>
+                            <i className="fa-regular fa-circle-xmark"></i> RDP
+                        </button>
                         {wolState === 'idle' ? (
-                          <button
+                          <button hidden
                             className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded"
                             name="wake"
                             onClick={() => sendWoL(computer.macAddress)}
@@ -327,11 +353,18 @@
                             ⏰ Zobudiť
                           </button>
                         ) : wolState === 'waking' ? (
-                          <p className="text-yellow-500">Zobúdzam počítač....</p>
+                          <div className="flex items-center" id="waking">
+                            <div className="relative inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-yellow-500 border-r-transparent">
+                              <span className="absolute top-1/2 left-full transform -translate-y-1/2 -translate-x-1/2 h-px w-px overflow-hidden whitespace-nowrap border-0 p-0 clip-[rect(0,0,0,0)]">
+                                Zobúdzanie
+                              </span>
+                            </div>
+                            <span className="ml-2 text-yellow-500">Zobúdzanie</span>
+                          </div>  
                         ) : wolState === 'woken' ? (
-                          <p className="text-green-500">Počítač zobudený</p>
+                          <p className="text-green-500">Zobudený</p>
                         ) : wolState === 'wokenError' ? (
-                          <div>
+                          <div hidden>
                             <button
                               className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded"
                               name="wake"
@@ -344,9 +377,14 @@
                         ) : null}
                       </>
                     ) : (
-                      <button className="bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-2 rounded" name="pinging">
-                        🏓 Pingovanie
-                      </button>
+                      <div className="flex items-center" id="pinging">
+                        <div className="relative inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent">
+                          <span className="absolute top-1/2 left-full transform -translate-y-1/2 -translate-x-1/2 h-px w-px overflow-hidden whitespace-nowrap border-0 p-0 clip-[rect(0,0,0,0)]">
+                            Pingovanie
+                          </span>
+                        </div>
+                        <span className="ml-2">Pingovanie</span>
+                      </div>
                     )}
                   </div>
                 </div>

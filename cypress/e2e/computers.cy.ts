@@ -7,7 +7,7 @@ describe('status of computers', () => {
       cy.wait(1000);
     });
 
-    cy.get('[data-testid="computer-item"] [data-testid="action_buttons"] button[name="pinging"]').should('not.exist');
+    cy.get('[data-testid="computer-item"] [data-testid="action_buttons"] button[id="pinging"]').should('not.exist');
   });
 
   it('deletes the last element in a grid', () => {

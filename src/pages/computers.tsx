@@ -37,18 +37,18 @@
             if (data.status === 'success') {
               const updatedResult = { ipAddress: computer.ipAddress, status: 'success' as const };
               setPingResults(prevResults => [...prevResults, updatedResult]);
-              console.log(`success ${computer.ipAddress}`);
-              checkRdpStatus(computer.ipAddress);
+              //console.log(`success ${computer.ipAddress}`);
             } else {
               const updatedResult = { ipAddress: computer.ipAddress, status: 'error' as const };
               setPingResults(prevResults => [...prevResults, updatedResult]);
-              console.log(`error ${computer.ipAddress}`);
+              //console.log(`error ${computer.ipAddress}`);
             }
           } catch (error) {
             const updatedResult = { ipAddress: computer.ipAddress, status: 'error' as const };
             setPingResults(prevResults => [...prevResults, updatedResult]);
             console.log(`error ${computer.ipAddress}`);
           }
+          await checkRdpStatus(computer.ipAddress);
         }
       };
 
@@ -59,56 +59,86 @@
       if (ipAddress) {
         const computer = computersData.find((computer) => computer.ipAddress === ipAddress);
         if (computer) {
-          if (devMode){
-            computer.ipAddress = "127.0.0.1";
-          }
-          // TODO: Nefunguje z nejakého dôvodu
           const updatedResult = { ipAddress: computer.ipAddress, status: 'pending' as const };
-          setPingResults((prevResults) => [...prevResults, updatedResult]);
+          setPingResults((prevResults) => [...prevResults.filter(result => result.ipAddress !== ipAddress), updatedResult]);
+          
           try {
             const response = await fetch(`${serverAddress}/ping/${computer.ipAddress}`);
             const data = await response.json();
+            
+            if (devMode) {
+              data.status = getRandom('success', 'error');
+              console.log('PING |   ', ipAddress, data.status)
+            }
+            
             if (data.status === 'success') {
               const updatedResult = { ipAddress: computer.ipAddress, status: 'success' as const };
-              setPingResults((prevResults) => [...prevResults, updatedResult]);
-              console.log(`success ${computer.ipAddress}`);
-              checkRdpStatus(computer.ipAddress);
+              setPingResults((prevResults) => [...prevResults.filter(result => result.ipAddress !== ipAddress), updatedResult]);
+              console.log(`PING | success ${computer.ipAddress}`);
+              await checkRdpStatus(computer.ipAddress);
               return "success";
             } else {
               const updatedResult = { ipAddress: computer.ipAddress, status: 'error' as const };
-              setPingResults((prevResults) => [...prevResults, updatedResult]);
-              console.log(`error ${computer.ipAddress}`);
+              setPingResults((prevResults) => [...prevResults.filter(result => result.ipAddress !== ipAddress), updatedResult]);
+              console.log(`PING | error ${computer.ipAddress}`);
               return "error";
             }
           } catch (error) {
             const updatedResult = { ipAddress: computer.ipAddress, status: 'error' as const };
-            setPingResults((prevResults) => [...prevResults, updatedResult]);
-            console.log(`error ${computer.ipAddress}`);
+            setPingResults((prevResults) => [...prevResults.filter(result => result.ipAddress !== ipAddress), updatedResult]);
+            console.log(`PING | error ${computer.ipAddress}`);
             return "error";
           }
         }
       }
     };
-    
 
     const checkRdpStatus = async (ipAddress: string) => {
-      const response = await fetch(`${serverAddress}/pingport/${ipAddress}/3389`);
-      const data = await response.json();
-      const updatedStatus = { ipAddress, rdpStatus: data.status };
-      setRdpStatuses(prevStatuses => [...prevStatuses, updatedStatus]);
+      try {
+        const response = await fetch(`${serverAddress}/pingport/${ipAddress}/3389`);
+        const data = await response.json();
+        
+        if (devMode) {
+          data.status = getRandom('success', 'error');
+        }
+        
+        const updatedStatus = { ipAddress, rdpStatus: data.status };
+        
+        setRdpStatuses(prevStatuses => {
+          const index = prevStatuses.findIndex(status => status.ipAddress === ipAddress);
+          
+          if (index !== -1) {
+            const newStatuses = [...prevStatuses];
+            newStatuses[index] = updatedStatus;
+            return newStatuses;
+          } else {
+            return [...prevStatuses, updatedStatus];
+          }
+        });
+        
+        console.log("RDP | ", data.status, ipAddress);
+        
+        return data.status;
+      } catch (error) {
+        console.log("Error:", error);
+      }
     };
+    
 
+    function getRandom(...arr: any) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
 
     const sendWoL = async (macAddress: string) => {
       let ipAddress = computersData.find(computer => computer.macAddress === macAddress)?.ipAddress;
       if (!ipAddress) {
-        console.log(`Nebola nájdená IP Adresa pre MAC Adresu: ${macAddress}`);
+        console.log(`WOL | Nebola nájdená IP Adresa pre MAC Adresu: ${macAddress}`);
         return;
       }
     
       const existingWolStatus = wolStatuses.find(status => status.ipAddress === ipAddress);
       if (existingWolStatus && existingWolStatus.wolState !== 'idle' && existingWolStatus.wolState !== 'wokenError') {
-        console.log(`WoL už prebieha pre IP Adresu: ${ipAddress}`);
+        console.log(`WOL | WoL už prebieha pre IP Adresu: ${ipAddress}`);
         return;
       }
     
@@ -117,60 +147,68 @@
     
       const response = await fetch(`${serverAddress}/wol/${macAddress}`);
       const data = await response.json();
-      console.log(data);
+      console.log('WOL | ', data);
     
       if (data.status === 'success') {
-        console.log('Zobúdzanie...');
+        console.log('WOL | Zobúdzanie...');
         let pingResponse;
-        if (devMode){
-          await new Promise(resolve => setTimeout(resolve, 0.01 * 60 * 1000));
-          pingResponse = await fetch(`${serverAddress}/ping/127.0.0.1`);
-        } else {
-          await new Promise(resolve => setTimeout(resolve, 2 * 60 * 1000));
-          pingResponse = await fetch(`${serverAddress}/ping/${ipAddress}`);
-        }
-        const pingData = await pingResponse.json();
-        const computer = computersData.find((computer) => computer.ipAddress === ipAddress);
-        if (pingData.status === 'success' && computer) {
-          if (devMode){
-            computer.ipAddress = "127.0.0.1";
-            ipAddress = "127.0.0.1"; 
-          }
-          const updatedResult = { ipAddress: computer.ipAddress, status: 'success' as const };
-          setPingResults((prevResults) => [...prevResults, updatedResult]);
-          console.log(`success ${computer.ipAddress}`);
-          checkRdpStatus(computer.ipAddress);
+        console.log("IP ADRESA", ipAddress);
+        const rdpValue = await checkRdpStatus(ipAddress);
+        if (rdpValue === "success") {
           setWolStatuses(prevStatuses => {
             const updatedStatuses = prevStatuses.map(status => {
               if (status.ipAddress === ipAddress) {
-              // if (ipAddress === ipAddress) {
-                console.log("woken");
+                console.log("WOL | woken");
                 return { ...status, wolState: 'woken' as const };
               }
               return status;
             });
-            return updatedStatuses;
+            return updatedStatuses.filter(status => status !== undefined);
           });
         } else {
-          setWolStatuses(prevStatuses => {
-            const updatedStatuses = prevStatuses.map(status => {
-              if (status.ipAddress === ipAddress) {
-                console.log("wokenError");
-                return { ...status, wolState: 'wokenError' as const };
-              }
-              return status;
-            });
-            return updatedStatuses;
-          });
-        }
-    
-        const finalStatuses = rdpStatuses.map(status => {
-          if (status.ipAddress === ipAddress) {
-            return { ...status, rdpStatus: 'success' as const };
+          if (devMode){
+            await new Promise(resolve => setTimeout(resolve, 0.01 * 60 * 1000));
+            pingResponse = await fetch(`${serverAddress}/ping/127.0.0.1`);
+          } else {
+            await new Promise(resolve => setTimeout(resolve, 2 * 60 * 1000));
+            pingResponse = await fetch(`${serverAddress}/ping/${ipAddress}`);
           }
-          return status;
-        });
-        setRdpStatuses(finalStatuses);
+          const pingData = await pingResponse.json();
+          if (devMode){
+            pingData.status = getRandom('error', 'success');
+            console.log("WOL DEV RANDOM | ", pingData.status);
+          }
+          const computer = computersData.find((computer) => computer.ipAddress === ipAddress);
+          if (pingData.status === 'success' && computer) {
+            const updatedResult = { ipAddress: ipAddress, status: 'success' as const };
+            setPingResults((prevResults) => [...prevResults, updatedResult]);
+            console.log(`WOL | success ${computer.ipAddress}`);
+            setWolStatuses(prevStatuses => {
+              const updatedStatuses = prevStatuses.map(status => {
+                if (status.ipAddress === ipAddress) {
+                // if (ipAddress === ipAddress) {
+                  console.log("WOL | woken");
+                  return { ...status, wolState: 'woken' as const };
+                }
+                return status;
+              });
+              return updatedStatuses;
+            });
+          } else {
+            setWolStatuses(prevStatuses => {
+              const updatedStatuses = prevStatuses.map(status => {
+                if (status.ipAddress === ipAddress) {
+                  console.log("WOL | wokenError");
+                  return { ...status, wolState: 'wokenError' as const };
+                }
+                return status;
+              });
+              return updatedStatuses;
+            });
+          }
+        }
+        
+
       }
     };
 
@@ -178,7 +216,7 @@
       try {
         await axios.post(`${serverAddress}/remove-computer`, { macAddress });
       } catch (error) {
-        console.log(error);  
+        console.log('WOL | ', error);  
       }
     };
 
@@ -213,7 +251,7 @@
         .then((response) => response.json())
         .then((data) => {
           // Handle the response if necessary
-          console.log(data);
+          console.log('WOL | ', data);
         })
         .catch((error) => {
           // Handle any errors
@@ -223,6 +261,22 @@
       setEditMode(false);
       setEditedValues(null);
     };
+    
+    function getStatusColorClass(status: 'success' | 'error' | 'pending' | 'idle' | 'waking' | 'woken' | 'wokenError'): string {
+      switch (status) {
+        case 'success':
+        case 'woken':
+          return 'text-green-500';
+        case 'error':
+        case 'wokenError':
+          return 'text-red-500';
+        case 'pending':
+        case 'waking':
+          return 'text-yellow-500';
+        default:
+          return '';
+      }
+    }
     
     
 
@@ -254,7 +308,28 @@
 
                   {/* <p className="mt-2"><i className="fas fa-desktop"></i> MAC Adresa: {computer.macAddress}</p> */}
                   <p><i className="fas fa-globe"></i> {computer.ipAddress}</p>
-                  {status === 'success' ? (
+
+                  {/*
+                  (devMode) ? (
+                    <div>
+                      <p className={getStatusColorClass(status)}>Status {status}</p>
+                      <p className={getStatusColorClass(rdpState)}>RDP Status {rdpState}</p>
+                      <p className={getStatusColorClass(wolState)}>WOL Status {wolState}</p>
+                    </div>
+                  ) : null
+                  */}
+
+                  {(status == 'pending') ? (
+                    <div className="flex items-center" id="pinging">
+                      <div className="relative inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent">
+                        <span className="absolute top-1/2 left-full transform -translate-y-1/2 -translate-x-1/2 h-px w-px overflow-hidden whitespace-nowrap border-0 p-0 clip-[rect(0,0,0,0)]">
+                          Pingovanie
+                        </span>
+                      </div>
+                      <span className="ml-2">Pingovanie</span>
+                    </div>
+                  )
+                  : (status === 'success' || rdpState === 'success' && wolState !== 'wokenError') || wolState === 'woken' ? (
                     <div className="flex justify-between">
                       <p className="text-green-600"><i className="fa-solid fa-plug"></i> Online</p>
                       {rdpState === 'success' ? (
@@ -263,9 +338,27 @@
                         <p className="text-red-600"><i className="fa-solid fa-circle-xmark"></i> RDP</p>
                       )}
                     </div>
-                  ) : (
-                    <p className="text-red-600"><i className="fa-solid fa-power-off"></i> Offline</p>
-                  )}
+                  ) : status === 'error' ? (
+                    <div className='flex justify-between'>
+                      <p className="text-red-600"><i className="fa-solid fa-power-off"></i> Offline</p>
+                      <p className="text-red-600"><i className="fa-solid fa-circle-xmark"></i> RDP</p>
+                    </div>
+                  ) : null}
+
+                  {wolState === 'waking' ? (
+                    <div className="flex items-center" id="waking">
+                      <div className="relative inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-yellow-500 border-r-transparent">
+                        <span className="absolute top-1/2 left-full transform -translate-y-1/2 -translate-x-1/2 h-px w-px overflow-hidden whitespace-nowrap border-0 p-0 clip-[rect(0,0,0,0)]">
+                          Zobúdzanie
+                        </span>
+                      </div>
+                      <span className="ml-2 text-yellow-500">Zobúdzanie</span>
+                    </div>  
+                  ) : wolState === 'woken' ? (
+                    <p className="text-green-500">Zobudený</p>
+                  ) : wolState === 'wokenError' ? (
+                    <p className="text-red-500">Počítač sa nepodarilo zobudiť</p>
+                  ) : null}
     
                   <div className="absolute top-0 right-0 mt-2 mr-2 space-x-2" data-testid="action_buttons">
                     {status === 'error' && (wolState === 'idle' || wolState === 'wokenError') ? (
@@ -322,7 +415,7 @@
                       <i className="fa-sharp fa-solid fa-trash"></i>
                     </button>
                   </div>
-    
+                  { /*
                   <div className="grid grid-cols-2 gap-4 mt-4" data-testid="status_buttons">
                     {status === 'success' ? (
                       <>
@@ -370,6 +463,7 @@
                       </div>
                     )}
                   </div>
+                    */}
                 </div>
               );
             })}

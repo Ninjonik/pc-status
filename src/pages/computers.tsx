@@ -301,6 +301,7 @@
                       value={editedValues.name}
                       name="name_input"
                       onChange={(e) => setEditedValues((prevValues) => ({ ...prevValues, name: e.target.value, ipAddress: prevValues?.ipAddress || '' }))}
+                      className="border border-gray-300 rounded-lg p-1"
                     />
                   ) : (
                     <h3 className="text-lg font-semibold" id="name">{computer.name}</h3>
@@ -347,7 +348,7 @@
 
                   {wolState === 'waking' ? (
                     <div className="flex items-center" id="waking">
-                      <div className="relative inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-yellow-500 border-r-transparent">
+                      <div className="relative inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-yellow-500 border-r-transparent">
                         <span className="absolute top-1/2 left-full transform -translate-y-1/2 -translate-x-1/2 h-px w-px overflow-hidden whitespace-nowrap border-0 p-0 clip-[rect(0,0,0,0)]">
                           Zobúdzanie
                         </span>

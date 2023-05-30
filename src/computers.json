@@ -1,6 +1,6 @@
 [
   {
-    "name": "#E Computer lllllll",
+    "name": "#E Computer lllllllX",
     "macAddress": "7C-5C-F8-5D-5F-CB",
     "ipAddress": "127.0.0.1"
   },
@@ -40,13 +40,8 @@
     "ipAddress": "58.249.101.162"
   },
   {
-    "name": "PC Test",
+    "name": "#E Computer",
     "macAddress": "60-5D-5D-BA-94-71",
     "ipAddress": "233.20.60.178"
-  },
-  {
-    "name": "#E Computer",
-    "macAddress": "1A-CA-8A-6B-DC-36",
-    "ipAddress": "222.14.249.194"
   }
 ]
